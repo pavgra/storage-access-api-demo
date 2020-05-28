@@ -1,0 +1,70 @@
+<html>
+    <body>
+        <div>
+            <span>Cookie enabled:</span>
+            <span id="cookie-status">False</span>
+        </div>
+        <div>
+            <span>Storage Access status:</span>
+            <span id="request-status">Not initiated</span>
+        </div>
+        <script type="text/javascript">
+            function isCookieEnabled() {
+                let cookieEnabled = false;
+                try {
+                    cookieEnabled = navigator.cookieEnabled;
+                    if (!cookieEnabled) {
+                        const sampleCookie = 'cookietest=1';
+                        document.cookie = sampleCookie;
+                        cookieEnabled = document.cookie.includes(sampleCookie);
+                        document.cookie = `${sampleCookie}; expires=Thu, 01-Jan-1970 00:00:01 GMT`;
+                    }
+                } catch (e) {
+                    cookieEnabled = false;
+                }
+                return cookieEnabled;
+            }
+
+            function displayCookieStatusEnabled() {
+                document.querySelector('#cookie-status').innerHTML = 'True';
+            }
+
+            function displayRequestStatus(status) {
+                document.querySelector('#request-status').innerHTML = status;
+            }
+
+            function pollCookieStatus() {
+                setTimeout(
+                    () => {
+                        if (isCookieEnabled()) {
+                            displayCookieStatusEnabled();
+                        } else {
+                            pollCookieStatus();
+                        }
+                    },
+                    1000
+                );
+            }
+
+            if (isCookieEnabled()) {
+                document.querySelector('#cookie-status').innerHTML = 'True';
+            } else {
+                if (document.requestStorageAccess) {
+                    displayRequestStatus('Initiated request');
+                    document.requestStorageAccess().then(
+                        () => {
+                            displayRequestStatus('Accepted');
+                            pollCookieStatus();
+                        },
+                        () => {
+                            displayRequestStatus('Rejected');
+                        }
+                    );
+                } else {
+                    displayRequestStatus('Not available');
+                    pollCookieStatus();
+                }
+            }
+        </script>
+    </body>
+</html>
