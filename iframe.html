@@ -15,28 +15,32 @@
             function isCookieEnabled() {
                 let cookieEnabled = false;
                 try {
-                    cookieEnabled = navigator.cookieEnabled;
+                    // Browser response
+                    let cookieEnabledInNav = navigator.cookieEnabled;
 
                     // Logging
-                    if (cookieEnabled !== prevCookieEnabledInNavigator) {
-                        prevCookieEnabledInNavigator = cookieEnabled;
-                        console.log('navigator.cookieEnabled', cookieEnabled);
+                    if (cookieEnabledInNav !== prevCookieEnabledInNavigator) {
+                        prevCookieEnabledInNavigator = cookieEnabledInNav;
+                        console.log('navigator.cookieEnabled', cookieEnabledInNav);
                     }
 
-                    if (!cookieEnabled) {
-                        const sampleCookie = 'cookietest=1';
-                        document.cookie = sampleCookie;
-                        cookieEnabled = document.cookie.includes(sampleCookie);
-                        document.cookie = `${sampleCookie}; expires=Thu, 01-Jan-1970 00:00:01 GMT`;
+                    // Actual result
+                    let cookieEnabledByTest;
+
+                    const sampleCookie = 'cookietest=1';
+                    document.cookie = sampleCookie;
+                    cookieEnabledByTest = document.cookie.includes(sampleCookie);
+                    document.cookie = `${sampleCookie}; expires=Thu, 01-Jan-1970 00:00:01 GMT`;
+
+                    // Logging
+                    if (cookieEnabledByTest !== prevCookieEnabledByTest) {
+                        prevCookieEnabledByTest = cookieEnabledByTest;
+                        console.log('cookieEnabledByTest', cookieEnabledByTest);
                     }
+
+                    cookieEnabled = cookieEnabledByTest;
                 } catch (e) {
                     cookieEnabled = false;
-                }
-
-                // Logging
-                if (cookieEnabled !== prevCookieEnabledByTest) {
-                    prevCookieEnabledByTest = cookieEnabled;
-                    console.log('cookieEnabled', cookieEnabled);
                 }
 
                 // Set test cookie
