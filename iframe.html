@@ -8,6 +8,7 @@
             <span>Storage Access status:</span>
             <span id="request-status">Not initiated</span>
         </div>
+        <button id="allow-cookies" style="display: none">Allow cookies</button>
         <script type="text/javascript">
             let prevCookieEnabledInNavigator = null;
             let prevCookieEnabledByTest = null;
@@ -59,6 +60,10 @@
                 document.querySelector('#request-status').innerHTML = status;
             }
 
+            function toggleRequestButtonDisplay(state) {
+                document.querySelector('#allow-cookies').style.display = state ? 'block' : 'none';
+            }
+
             function pollCookieStatus() {
                 setTimeout(
                     () => {
@@ -72,21 +77,27 @@
                 );
             }
 
+            function initiateStorageAccessApiRequest() {
+                displayRequestStatus('Initiated request');
+                document.requestStorageAccess().then(
+                    () => {
+                        displayRequestStatus('Accepted');
+                        toggleRequestButtonDisplay(false);
+                        pollCookieStatus();
+                    },
+                    (...args) => {
+                        displayRequestStatus('Rejected');
+                    }
+                );
+            }
+
+            document.querySelector('#allow-cookies').addEventListener('click', initiateStorageAccessApiRequest);
+
             if (isCookieEnabled()) {
                 document.querySelector('#cookie-status').innerHTML = 'True';
             } else {
                 if (document.requestStorageAccess) {
-                    displayRequestStatus('Initiated request');
-                    document.requestStorageAccess().then(
-                        () => {
-                            displayRequestStatus('Accepted');
-                            pollCookieStatus();
-                        },
-                        (...args) => {
-                            console.log('requestStorageAccess rejected:', args);
-                            displayRequestStatus('Rejected');
-                        }
-                    );
+                    toggleRequestButtonDisplay(true);
                 } else {
                     displayRequestStatus('Not available');
                     pollCookieStatus();
