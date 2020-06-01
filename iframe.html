@@ -39,6 +39,11 @@
                     console.log('cookieEnabled', cookieEnabled);
                 }
 
+                // Set test cookie
+                if (cookieEnabled) {
+                    document.cookie = `debug-storage-access-api=${+(new Date())}`;
+                }
+
                 return cookieEnabled;
             }
 
