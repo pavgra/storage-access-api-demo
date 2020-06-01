@@ -82,7 +82,8 @@
                             displayRequestStatus('Accepted');
                             pollCookieStatus();
                         },
-                        () => {
+                        (...args) => {
+                            console.log('requestStorageAccess rejected:', args);
                             displayRequestStatus('Rejected');
                         }
                     );
