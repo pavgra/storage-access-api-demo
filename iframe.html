@@ -97,7 +97,16 @@
                 document.querySelector('#cookie-status').innerHTML = 'True';
             } else {
                 if (document.requestStorageAccess) {
-                    toggleRequestButtonDisplay(true);
+                    document.hasStorageAccess().then(
+                        hasAccess => {
+                            console.log('hasStorageAccess', hasAccess);
+                            !hasAccess && toggleRequestButtonDisplay(true);
+                        },
+                        reason => {
+                            console.log('hasStorageAccess', reason);
+                            toggleRequestButtonDisplay(true);
+                        }
+                    );
                 } else {
                     displayRequestStatus('Not available');
                     pollCookieStatus();
